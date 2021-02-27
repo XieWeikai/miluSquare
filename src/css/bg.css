@@ -1,0 +1,10 @@
+.bg-img{
+    position: relative;
+    background-image: url("../other/background.jpg");
+    background-size: 100%;
+    background-position: center;
+}
+
+.bg-header{
+    position: absolute;
+}

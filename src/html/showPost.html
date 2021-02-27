@@ -1,0 +1,77 @@
+{{define "layout"}}
+{{$post := .Post}}
+{{$comm := .Comm}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>帖子-{{$post.Title}}</title>
+    <link href="/static/other/favicon.ico" rel="icon">
+    <meta name="description" content="麋鹿广场:为大学生准备的社区平台">
+    <meta name="keywords" content="麋鹿广场,新帖子">
+    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/froala-editor/css/froala_editor.pkgd.min.css" rel="stylesheet">
+</head>
+<body style="padding-bottom: 60px; position: relative">
+{{ template "nav"}}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{$post.Title}}<small class="pull-right badge">{{$post.Topic}}</small></h3>
+    </div>
+    <div class="panel-body fr-view">
+        {{.Content}}
+    </div>
+    <div class="panel-footer">
+        {{$post.Date}}<small class="pull-right">社区{{$comm.Id}}:{{$comm.Name}}</small>
+    </div>
+</div>
+
+{{template "comment" .}}
+
+<script src="/static/js/jquery.min.js"></script>
+{{ template "footer" }}
+<script src="/static/js/data.js"></script>
+<script src="/static/js/vue.js"></script>
+{{/*<script src="static/js/vuePost.js"></script>*/}}
+<script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+{{/*<script src="/static/froala-editor/js/froala_editor.pkgd.min.js"></script>*/}}
+<script src="/static/js/setting.js"></script>
+<script>
+    milu.vueComment = new Vue({
+        el:"#vueComment",
+        data:{
+            content:'',
+            nil:true,
+        },
+        methods:{
+            comment:function () {
+                var p = window.location.pathname.split('/');
+                var pId = Number(p[2]);
+                $.ajax('/newcomment',{
+                    method:'POST',
+                    data:{
+                        content:this.content,
+                        postId:pId,
+                    }
+                }).done(function () {
+                    window.location.reload();
+                }).fail(function (){
+                    alert('发表评论失败');
+                })
+            },
+            check:function () {
+                if(this.content)
+                    this.nil = false;
+                else
+                    this.nil = true;
+            }
+        }
+    })
+</script>
+{{/*<script src="static/js/editor.js"></script>*/}}
+
+</body>
+</html>
+
+{{end}}

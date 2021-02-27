@@ -1,0 +1,105 @@
+{{define "layout"}}
+{{$comm := .Comm}}
+{{$uid := .Uid}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>社区-{{$comm.Name}}</title>
+    <link href="/static/other/favicon.ico" rel="icon">
+    <meta name="description" content="麋鹿广场:为大学生准备的社区平台">
+    <meta name="keywords" content="麋鹿广场,新帖子">
+    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="padding-bottom: 60px; position: relative">
+{{ template "nav"}}
+
+<div class="container-fluid">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">{{$comm.Name}} <small> 所属:{{$comm.BelongTo}}</small> <small class="pull-right">{{$comm.Date}}</small> </h2>
+        </div>
+        <div class="panel-body">
+            <p>{{$comm.Desc}}</p>
+        </div>
+        <div class="list-group">
+            <li class="list-group-item list-group-item-heading list-group-item-info">
+                <h3>
+                    帖子
+                    <a href="/newpost?commID={{$comm.Id}}" class="btn btn-xs btn-success pull-right" role="button">发帖</a>
+                </h3>
+            </li>
+            {{range .Posts}}
+                <div class="list-group-item list-group-item-info">
+                    <a href="/post/{{.Id}}" >
+                        <h4>{{.Title}}
+                            {{if eq $uid .UserId}}
+                                <div class="btn-group pull-right" role="group">
+                                    <a href="/update/post/{{.Id}}" class="btn btn-warning btn-xs" role="button">
+                                        修改
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deletion" value="{{.Id}}" onclick="setId(this)">
+                                        删除
+                                    </button>
+                                </div>
+                            {{end}}
+                            <small class="pull-right badge">{{.Topic}}</small>
+                        </h4>
+                    </a>
+
+                </div>
+            {{end}}
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="deletion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">询问</h4>
+            </div>
+            <div class="modal-body">
+                是否删除该条帖子？？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="delPost()">删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ template "footer" }}
+<script src="/static/js/jquery.min.js"></script>
+{{/*<script src="/static/js/data.js"></script>*/}}
+{{/*<script src="/static/js/vue.js"></script>*/}}
+<script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/static/js/setting.js"></script>
+<script>
+    function delPost(){
+        if(delPost.pId === undefined)
+            return ;
+        $.ajax("/delete/post/"+delPost.pId,{
+            method:'POST',
+        }).done(function (){
+            window.location.reload();
+        }).fail(function (){
+            alert('未知原因，删除失败')
+        })
+    }
+
+    function setId(e){
+        delPost.pId = $(e).attr('value');
+       // alert(delPost.pId);
+    }
+
+</script>
+
+</body>
+</html>
+
+{{end}}

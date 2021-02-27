@@ -1,0 +1,153 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>个人-帖子</title>
+    <link href="/static/other/favicon.ico" rel="icon">
+    <meta name="description" content="麋鹿广场:为大学生准备的社区平台,个人中心">
+    <meta name="keywords" content="麋鹿广场,milu-Square,大学生,社区,个人中心">
+    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="padding-bottom: 60px;position: relative">
+{{template "nav"}}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>您的帖子<small>您可以在此修改或删除帖子</small></h1>
+    </div>
+
+    <div id="posts">
+        <h3>帖子列表</h3>
+        <div class="list-group">
+            <div  class="list-group-item list-group-item-info" v-for="item in lists">
+                <a :href="'/post/'+item.id">
+                    <h4 class="list-group-item-heading">
+                        <small>社区id:{item.community_id}</small>{item.title}
+                    </h4>
+                </a>
+                <div class="btn-group pull-right" role="group">
+                    <a :href="'/update/post/'+item.id" class="btn btn-warning btn-xs" role="button">
+                        修改
+                    </a>
+                    <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deletion" :value="item.id" onclick="setId(this)">
+                        删除
+                    </button>
+                </div>
+                <span><small> <span class="badge">{item.topic}</span> {item.date}  </small></span>
+            </div>
+        </div>
+        <div class="text-center">
+            <ul class="pagination text-center">
+                <li @click="changeP(1)">
+                    <span aria-hidden="true">&laquo;</span>
+                </li>
+                <li v-for="i in Plist" v-show="i <= numP" :class="{'active':currentPage == i}"><span @click="page(i)">{ i }</span></li>
+                <li @click="changeP(2)">
+                    <span aria-hidden="true">&raquo;</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="modal fade" id="deletion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">询问</h4>
+                    </div>
+                    <div class="modal-body">
+                        是否删除该条帖子？？
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @click="delPost">删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "footer"}}
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/static/js/data.js"></script>
+<script src="/static/js/vue.js"></script>
+<script src="/static/js/setting.js"></script>
+<script>
+    function getArti(l,r) {
+        if(getArti.data === undefined){
+            getArti.data = milu.posts('user',{{.}});
+            getArti.arLen = getArti.data != null ? getArti.data.length : 0;
+        }
+        if(l >= getArti.arLen)
+            return [];
+        if(r > getArti.arLen - 1)
+            r = getArti.arLen - 1;
+        return getArti.data.slice(l,r+1);
+    }
+
+
+    var posts = new Vue({
+        el:'#posts',
+        delimiters: ['{','}'],
+        data:{
+            lists:[],
+            numP:10,//number of pages
+            numAr:80,//number of articles
+            Plist:[1,2,3],//page navigation list
+            currentPage:1,
+            delId:null,
+        },
+        methods:{
+            page:function (index) {
+                //alert(index);
+                this.currentPage = index;
+                this.lists = getArti((index-1)*8,index*8-1);
+            },
+            changeP:function (st) {
+                //alert(st);
+                var tmp = [];
+                if(st == 1){
+                    if(this.Plist[0]<4) {
+                        //alert("1 return");
+                        return;
+                    }
+                    for (key in this.Plist)
+                        tmp.push(this.Plist[key] - 3);
+                }else {
+                    if(this.Plist[0]+3>this.numP) {
+                        //alert("2 return");
+                        return;
+                    }
+                    for (key in this.Plist)
+                        tmp.push(this.Plist[key] + 3);
+                }
+                this.Plist = tmp;
+            },
+            delPost:function (){
+                $.ajax("/delete/post/"+this.delId,{
+                    method:'POST',
+                }).done(function (){
+                    window.location.reload();
+                }).fail(function (){
+                    alert('未知原因，删除失败')
+                })
+            }
+        },
+        created:function () {
+            this.lists = getArti(0,7);
+            this.numAr = getArti.arLen;
+            this.numP = Math.ceil(this.numAr / 8);
+        }
+    });
+    function setId(e){
+        posts.delId = $(e).attr('value');
+    }
+</script>
+</body>
+</html>
+
+{{end}}

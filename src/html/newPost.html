@@ -1,0 +1,77 @@
+{{define "layout"}}
+{{$msg := .Msg}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>新帖子</title>
+    <link href="./static/other/favicon.ico" rel="icon">
+    <meta name="description" content="麋鹿广场:为大学生准备的社区平台">
+    <meta name="keywords" content="麋鹿广场,新帖子">
+    <link href="static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/froala-editor/css/froala_editor.pkgd.min.css" rel="stylesheet">
+    <style>
+        #fr-logo{
+            display: none;
+        }
+    </style>
+</head>
+<body style="padding-bottom: 60px; background-color: rgb(247,247,247);position: relative">
+{{ template "nav"}}
+
+<form id="newpost" action="/newpost" method="post">
+    <div class="form-group">
+        <div class="text-center center-block">
+            <label for="title">标题</label>
+            <input type="text" class="form-control" id="title" placeholder="title" name="title">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="text-center center-block">
+            <label for="topic">主题</label>
+            <input type="text" class="form-control" id="topic" placeholder="topic" name="topic">
+        </div>
+    </div>
+    {{if eq .Id ""}}
+        <div class="form-group">
+            <div class="text-center center-block">
+                <label for="commid">社区id</label>
+                <input type="number" class="form-control" id="commid" placeholder="community_id" name="communityId" v-model.number="commid" @input="check" >
+            </div>
+        </div>
+        <div class="alert alert-danger text-center" role="alert" v-show="err">社区id有误,请检查</div>
+
+    {{else}}
+        <input type="hidden" name="communityId" value="{{.Id}}">
+    {{end}}
+    <textarea name="content" id="edit"></textarea>
+
+    <div class="form-group">
+        <div class="center-block text-center">
+            <button type="submit" class="btn btn-default" :disabled="err">创建</button>
+        </div>
+    </div>
+</form>
+{{ if $msg.Exist}}
+    <div class="alert {{$msg.Alert}} text-center" role="alert">{{$msg.Msg}}</div>
+{{end}}
+
+{{ template "footer" }}
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/data.js"></script>
+<script src="static/js/vue.js"></script>
+{{if eq .Id ""}}
+<script src="static/js/vuePost.js"></script>
+{{end }}
+<script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/static/froala-editor/js/froala_editor.pkgd.min.js"></script>
+<script src="/static/froala-editor/js/languages/zh_cn.js"></script>
+<script src="static/js/setting.js"></script>
+<script src="static/js/editor.js"></script>
+
+</body>
+</html>
+
+{{end}}

@@ -1,0 +1,90 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>麋鹿广场</title>
+    <link href="static/other/favicon.ico" rel="icon">
+    <meta name="description" content="麋鹿广场:为大学生准备的社区平台">
+    <meta name="keywords" content="麋鹿广场,milu-Square,大学生,社区">
+    <link href="static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/bg.css" rel="stylesheet">
+    <style>
+        .cli:hover{
+            cursor: pointer;
+            background: #999999;
+        }
+        .link:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style="padding-bottom: 60px;position: relative">
+    {{template "nav"}}
+    <div id="miluIndex">
+        <div class="bg-img text-center">
+            <div class="bg-header">
+                <h1 class="">麋鹿广场</h1>
+                <h3 class="text-muted">专门为大学生准备的社区平台</h3>
+                <h4 class="text-info">欢迎各位大学生加入麋鹿广场大家庭</h4>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="comms" class="col-xs-6 col-sm-3">
+                <h3>社区列表</h3>
+                <ul class="list-group">
+                    <template v-for="com in comunities">
+                        <li class="list-group-item">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <a :href="'/community/'+ com.id"><h3 class="panel-title">{ com.name } <small>id:{com.id}</small></h3></a>
+                                </div>
+                                <div class="panel-body" style="overflow: scroll">
+                                    { com.description }
+                                </div>
+                                <div class="panel-footer text-left">{ com.date }</div>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+                <div class="text-center" @click="showMore(null,true)"><span v-show="showAll" class="glyphicon glyphicon-menu-up cli"></span></div>
+                <div class="text-center" @click="showMore(3)"><span v-show="!showAll" class="glyphicon glyphicon-menu-down cli"></span></div>
+                <div class="alert alert-warning" role="alert" v-show="showAll" >已显示完所有内容</div>
+            </div>
+            <div id="posts" class="col-xs-6 col-sm-9">
+                <h3>帖子列表</h3>
+                <div class="list-group">
+                    <a :href="'/post/'+item.id" class="list-group-item list-group-item-info" v-for="item in lists">
+                        <h4 class="list-group-item-heading"><small>社区id:{item.community_id}</small>{item.title} </h4>
+                        <span><small> <span class="badge">{item.topic}</span> {item.date}  </small></span>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <ul class="pagination text-center">
+                        <li @click="changeP(1)">
+                            <span aria-hidden="true">&laquo;</span>
+                        </li>
+                        <li v-for="i in Plist" v-show="i <= numP" :class="{'active':currentPage == i}"><span @click="page(i)">{ i }</span></li>
+                        <li @click="changeP(2)">
+                            <span aria-hidden="true">&raquo;</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "footer"}}
+
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="static/js/data.js"></script>
+    <script src="static/js/vue.js"></script>
+    <script src="static/js/setting.js"></script>
+    <script src="/static/js/vueIndex.js"></script>
+</body>
+</html>
+
+{{end}}

@@ -1,0 +1,47 @@
+{{define "layout"}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>社区-{{.Name}}</title>
+    <link href="/static/other/favicon.ico" rel="icon">
+    <meta name="description" content="麋鹿广场:为大学生准备的社区平台">
+    <meta name="keywords" content="麋鹿广场,新帖子">
+    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="padding-bottom: 60px; position: relative">
+{{ template "nav"}}
+<div class="container-fluid">
+    <div class="jumbotron">
+        <h1>Hello,{{.Name}}!</h1>
+        <p><small>注册时间{{.Date}}</small></p>
+        <p>这是您的个人主页<small>uid{{.Id}}</small></p>
+        <p><small>(朴素即是美德(＾Ｕ＾)ノ~ＹＯ)</small></p>
+        <!-- Single button -->
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                编辑 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="/home/community">社区</a></li>
+                <li><a href="/home/post">帖子</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/home/info">个人资料</a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+{{ template "footer" }}
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/data.js"></script>
+<script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/static/js/setting.js"></script>
+
+</body>
+</html>
+
+{{end}}

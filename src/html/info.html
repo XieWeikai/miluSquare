@@ -1,0 +1,74 @@
+{{define "layout"}}
+{{$msg := .Msg}}
+{{$user := .User}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>个人资料-{{$user.Name}}</title>
+    <link href="/static/other/favicon.ico" rel="icon">
+    <meta name="description" content="麋鹿广场:为大学生准备的社区平台">
+    <meta name="keywords" content="麋鹿广场,个人资料">
+    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="padding-bottom: 60px; position: relative">
+{{ template "nav"}}
+
+<form id="info" method="post" action="/update/user">
+    <div class="form-group">
+        <div class="text-center center-block">
+            <label for="userName">名字</label>
+            <button type="button" @click="name=!name;nameBtn1=name?'禁用':'修改'" class="btn btn-warning btn-xs">{nameBtn1}</button>
+            <input type="text" class="form-control" id="userName" placeholder="{{$user.Name}}" name="userName" :disabled="!name">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="text-center center-block">
+            <label for="email">邮箱</label>
+            <button type="button" @click="email=!email;nameBtn2=email?'禁用':'修改'" class="btn btn-warning btn-xs">{nameBtn2}</button>
+            <input type="email" class="form-control" id="email" placeholder="{{$user.Email}}" name="email" :disabled="!email">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="text-center center-block">
+            <label for="psw">密码</label>
+            <button type="button" @click="pw=!pw;nameBtn3=pw?'禁用':'修改'" class="btn btn-warning btn-xs">{nameBtn3}</button>
+            <input type="password" class="form-control" id="psw" placeholder="new password" name="password" :disabled="!pw">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="center-block text-center">
+            <button type="submit" class="btn btn-default" :disabled="!(name || email || pw)">修改</button>
+        </div>
+    </div>
+</form>
+{{ if $msg.Exist}}
+    <div class="alert {{$msg.Alert}} text-center" role="alert">{{$msg.Msg}}</div>
+{{end}}
+
+{{ template "footer" }}
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/data.js"></script>
+<script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/static/js/setting.js"></script>
+<script src="/static/js/vue.js"></script>
+<script>
+    var info = new Vue({
+        delimiters:['{','}'],
+        el:'#info',
+        data:{
+            name:false,
+            email:false,
+            pw:false,
+            nameBtn1:'修改',
+            nameBtn2:'修改',
+            nameBtn3:'修改',
+        }
+    })
+</script>
+</body>
+</html>
+
+{{end}}

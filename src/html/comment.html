@@ -1,0 +1,71 @@
+{{define "comment"}}
+
+{{if .Login}}
+    <div id="vueComment">
+        <textarea class="form-control" rows="3" placeholder="发条友善的评论,空评论不能发表" v-model="content" @input="check"></textarea>
+        <button type="button" class="btn btn-success" :disabled="nil" @click="comment">发表</button>
+    </div>
+{{else}}
+    <p>登录后才能评论哦</p>
+{{end}}
+    <div class="panel panel-info" style="margin-top:2rem ">
+        <div class="panel-heading">
+            <h3 class="panel-title">评论区</h3>
+        </div>
+        <ul class="list-group">
+            {{$post := .Post}}
+            {{$ := .}}
+            {{range $post.Comments}}
+            <li class="list-group-item">
+                <p>{{.Content}}</p>
+                <hr>
+                <p>
+                    userId:<small>{{.UserId}}</small>
+                    {{if $.Delete}}
+                        <button type="button" class="btn btn-danger btn-xs pull-right" data-toggle="modal" data-target="#deletion" value="{{.Id}}" onclick="setId(this)">
+                            删除
+                        </button>
+                    {{end}}
+                    <small class="pull-right" style="padding-right: 5px">{{.Date}}</small>
+                </p>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+    <div class="modal fade" id="deletion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">询问</h4>
+                </div>
+                <div class="modal-body">
+                    是否删除该条评论？？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="delComment()">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function delComment(){
+            if(delComment.cId){
+                //console.log('send to','/delete/comment/'+delComment.cId);
+                $.ajax('/delete/comment/'+delComment.cId,{
+                    method:'POST',
+                }).done(function (){
+                    //alert('done');
+                    window.location.reload();
+                }).fail(function () {
+                    alert('fail to delete the comment');
+                })
+            }
+        }
+        function setId(e){
+            delComment.cId = $(e).attr('value');
+        }
+    </script>
+
+{{end}}

@@ -1,0 +1,11 @@
+/api/:item/:method
+
+item := "community"
+    | "user"
+    | "post"
+    | "comment"
+
+method := "limit"  e.g.  /api/user/limit?l=left&r=Right
+    | "all"
+    | "posts"  e.g. /api/community/posts
+    | "communities"  e.g. /api/user/communities?id=user_id

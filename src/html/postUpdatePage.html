@@ -1,0 +1,90 @@
+{{define "layout"}}
+{{$msg := .Msg}}
+{{$post := .Post}}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>改帖-{{$post.Title}}</title>
+        <link href="/static/other/favicon.ico" rel="icon">
+        <meta name="description" content="麋鹿广场:为大学生准备的社区平台">
+        <meta name="keywords" content="麋鹿广场,改帖子">
+        <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/froala-editor/css/froala_editor.pkgd.min.css" rel="stylesheet">
+        <style>
+            #fr-logo{
+                display: none;
+            }
+        </style>
+    </head>
+    <body style="padding-bottom: 60px; background-color: rgb(247,247,247);position: relative">
+    {{ template "nav"}}
+
+    <form id="post" action="/update/post?id={{$post.Id}}" method="post">
+        <div class="form-group">
+            <div class="text-center center-block">
+                <label for="title">标题</label>
+                <input type="text" class="form-control" id="title" placeholder="title" name="title" value="{{$post.Title}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="text-center center-block">
+                <label for="topic">主题</label>
+                <input type="text" class="form-control" id="topic" placeholder="topic" name="topic" value="{{$post.Topic}}">
+            </div>
+        </div>
+
+        <textarea name="content" id="edit"></textarea>
+
+        <div class="form-group">
+            <div class="center-block text-center">
+                <button type="submit" class="btn btn-default">修改</button>
+            </div>
+        </div>
+    </form>
+    {{ if $msg.Exist}}
+        <div class="alert {{$msg.Alert}} text-center" role="alert">{{$msg.Msg}}</div>
+    {{end}}
+
+    {{ template "footer" }}
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/froala-editor/js/froala_editor.pkgd.min.js"></script>
+    <script src="/static/froala-editor/js/languages/zh_cn.js"></script>
+    <script src="/static/js/setting.js"></script>
+    <script>
+        var editor = new FroalaEditor('#edit',{
+            imageUploadURL:'/imgUpload',
+            placeholderText:'再此输入内容，可以插入图片，但请不要上传文件，暂不支持',
+            imageManagerDeleteURL:'/imgDelete',
+            imageUploadParams:{
+                id:'edit'
+            },
+            language:'zh_cn',
+            events: {
+                'image.removed': function ($img) {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+
+                        // Image was removed.
+                        if (this.readyState == 4 && this.status == 200) {
+                            console.log ('image was deleted');
+                        }
+                    };
+                    xhttp.open("POST", "/imgDelete", true);
+                    xhttp.send(JSON.stringify({
+                        src: $img.attr('src')
+                    }));
+                    //alert('delete img');
+                }
+            }
+        },function(){
+            editor.html.set('{{.Content}}');
+        });
+    </script>
+
+    </body>
+    </html>
+
+{{end}}
